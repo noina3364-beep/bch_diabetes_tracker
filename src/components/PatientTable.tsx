@@ -51,17 +51,17 @@ export function PatientTable({ patients }: PatientTableProps) {
       <div className="overflow-x-auto overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-track-slate-50 scrollbar-thumb-slate-200">
         <table className="w-full text-left border-collapse sticky-header">
           <thead className="sticky top-0 z-10 bg-white">
-            <tr className="text-xs uppercase text-slate-400 border-b border-slate-100">
+            <tr className="text-xs text-slate-400 border-b border-slate-100">
               <SortableHeader field="name" currentField={sortField} order={sortOrder} onSort={handleSort} label="Patient" className="px-6" />
-              <SortableHeader field="location" currentField={sortField} order={sortOrder} onSort={handleSort} label="Location/Doc" className="px-6" />
-              <SortableHeader field="is_complete" currentField={sortField} order={sortOrder} onSort={handleSort} label="Status" className="px-6" />
+              <SortableHeader field="location" currentField={sortField} order={sortOrder} onSort={handleSort} label="Location/Dr" className="px-6" />
+              <SortableHeader field="status" currentField={sortField} order={sortOrder} onSort={handleSort} label="Status" className="px-6" />
               <SortableHeader field="hba1c" currentField={sortField} order={sortOrder} onSort={handleSort} label="HbA1c" className="px-4 text-center" />
               <SortableHeader field="egfr" currentField={sortField} order={sortOrder} onSort={handleSort} label="eGFR" className="px-4 text-center" />
               <SortableHeader field="has_ldl" currentField={sortField} order={sortOrder} onSort={handleSort} label="LDL" className="px-4 text-center" />
               <SortableHeader field="has_foot" currentField={sortField} order={sortOrder} onSort={handleSort} label="Foot" className="px-4 text-center" />
               <SortableHeader field="has_eye" currentField={sortField} order={sortOrder} onSort={handleSort} label="Eye" className="px-4 text-center" />
               <SortableHeader field="has_den" currentField={sortField} order={sortOrder} onSort={handleSort} label="Dental" className="px-4 text-center" />
-              <SortableHeader field="fu" currentField={sortField} order={sortOrder} onSort={handleSort} label="FU Date" className="px-4 text-center" />
+              <SortableHeader field="fu" currentField={sortField} order={sortOrder} onSort={handleSort} label="Appointment Date" className="px-4 text-center" />
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
@@ -69,8 +69,8 @@ export function PatientTable({ patients }: PatientTableProps) {
               <tr key={p.hn} className="hover:bg-slate-50/50 transition-colors">
                 <td className="px-6 py-3">
                   <div className="flex flex-col">
-                    <span className="font-semibold text-slate-900 text-sm">{p.name}</span>
-                    <span className="text-xs font-mono text-slate-400 uppercase">HN: {p.hn} • {p.age}y</span>
+                    <span className="font-mono font-bold text-slate-900 text-sm uppercase">HN: {p.hn}</span>
+                    <span className="text-xs text-slate-400 font-semibold">{p.name} • {p.age}y</span>
                   </div>
                 </td>
                 <td className="px-6 py-3">
@@ -80,10 +80,12 @@ export function PatientTable({ patients }: PatientTableProps) {
                   </div>
                 </td>
                 <td className="px-6 py-3">
-                  {p.is_complete ? (
-                    <span className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded uppercase tracking-tighter">Complete</span>
+                  {p.status === 'Complete' ? (
+                    <span className="px-2 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded uppercase tracking-tighter">Complete</span>
+                  ) : p.status === 'Partially Complete' ? (
+                    <span className="px-2 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold rounded uppercase tracking-tighter">Partially Complete</span>
                   ) : (
-                    <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded uppercase tracking-tighter">Incomplete</span>
+                    <span className="px-2 py-1 bg-rose-50 text-rose-700 text-[10px] font-bold rounded uppercase tracking-tighter">Incomplete</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">

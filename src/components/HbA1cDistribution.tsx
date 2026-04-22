@@ -9,7 +9,7 @@ interface DistributionProps {
 export function DistributionChart({ title, data }: DistributionProps) {
   return (
     <div className="bg-white p-5 rounded-xl border border-slate-200 flex flex-col h-full">
-      <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">{title}</h3>
+      <h3 className="text-xs font-bold text-slate-500 tracking-widest mb-4">{title}</h3>
       
       <div className="flex-1 min-h-[160px]">
         <ResponsiveContainer width="100%" height="100%">

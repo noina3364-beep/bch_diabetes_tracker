@@ -36,6 +36,7 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   const handleUpload = async (buffer: ArrayBuffer) => {
     setIsLoading(true);
@@ -46,6 +47,7 @@ export default function App() {
       setSearchTerm('');
       setSelectedLocation('');
       setSelectedDoctor('');
+      setSelectedStatus('');
     } catch (error) {
       console.error("Failed to process Excel:", error);
       alert("Error processing Excel file. Please ensure it follows the format.");
@@ -74,9 +76,10 @@ export default function App() {
                            p.hn.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesLocation = !selectedLocation || p.location === selectedLocation;
       const matchesDoctor = !selectedDoctor || p.doctor === selectedDoctor;
-      return matchesSearch && matchesLocation && matchesDoctor;
+      const matchesStatus = !selectedStatus || p.status === selectedStatus;
+      return matchesSearch && matchesLocation && matchesDoctor && matchesStatus;
     });
-  }, [rawData, searchTerm, selectedLocation, selectedDoctor]);
+  }, [rawData, searchTerm, selectedLocation, selectedDoctor, selectedStatus]);
 
   const metrics = useMemo(() => {
     if (filteredPatients.length === 0) return null;
@@ -109,16 +112,21 @@ export default function App() {
       { field: 'LDL', count: total - ldlCount },
       { field: 'eGFR', count: total - egfrCount },
       { field: 'Dental', count: total - denCount },
-      { field: 'Follow Up', count: total - fuCount },
     ].sort((a, b) => b.count - a.count);
 
     return {
       totalPatients: total,
       hba1cCoverage: (hba1cCount / total) * 100,
+      hba1cCount,
       egfrCoverage: (egfrCount / total) * 100,
+      egfrCount,
       ldlCoverage: (ldlCount / total) * 100,
-      screeningCoverage: ((footCount + eyeCount) / (total * 2)) * 100,
+      ldlCount,
+      screeningCoverage: ((footCount + eyeCount + denCount) / (total * 3)) * 100,
+      screeningCount: footCount + eyeCount + denCount,
+      screeningTotal: total * 3,
       dentalCoverage: (denCount / total) * 100,
+      dentalCount: denCount,
       hba1cDistribution: Object.entries(hba1cDist).map(([name, value]) => {
         const pct = total > 0 ? Math.round((value / total) * 100) : 0;
         return {
@@ -155,12 +163,6 @@ export default function App() {
           coveredCount: denCount,
           missingCount: total - denCount
         },
-        { 
-          name: 'Follow Up', 
-          percentage: (fuCount / total) * 100,
-          coveredCount: fuCount,
-          missingCount: total - fuCount
-        },
       ]
     };
   }, [filteredPatients]);
@@ -184,19 +186,12 @@ export default function App() {
           {rawData.length > 0 && (
             <button 
               onClick={clearData}
-              className="px-3 py-2 text-sm font-bold text-rose-500 uppercase tracking-wider hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2"
+              className="px-5 py-3 text-sm font-bold text-rose-500 uppercase tracking-widest hover:bg-rose-50 rounded-xl transition-all flex items-center gap-2 border border-rose-100 shadow-sm shadow-rose-100/50"
             >
               <Trash2 className="w-5 h-5" />
-              Clear Dataset
+              Reset Monitor
             </button>
           )}
-          <button 
-            onClick={() => document.querySelector('input[type=\"file\"]')?.dispatchEvent(new MouseEvent('click'))}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
-          >
-            <Upload className="w-5 h-5" />
-            <span className="text-base font-bold uppercase tracking-tight">Upload Excel</span>
-          </button>
         </div>
       </header>
 
@@ -215,7 +210,7 @@ export default function App() {
                 {['HN', 'Date', 'HbA1c', 'eGFR'].map(tag => (
                   <div key={tag} className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-50 py-3 rounded-lg">{tag}</div>
                 ))}
-                {['LDL', 'Foot', 'Eye', 'Dental', 'FU Date'].map(tag => (
+                {['LDL', 'Foot', 'Eye', 'Dental', 'Appointment Date'].map(tag => (
                   <div key={tag} className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-50 py-3 rounded-lg">{tag}</div>
                 ))}
               </div>
@@ -240,6 +235,8 @@ export default function App() {
                   index={1}
                   label="HbA1c Coverage" 
                   value={metrics ? `${Math.round(metrics.hba1cCoverage)}%` : '0%'} 
+                  count={metrics?.hba1cCount}
+                  total={metrics?.totalPatients}
                   color="blue"
                   percentage={metrics?.hba1cCoverage}
                 />
@@ -247,6 +244,8 @@ export default function App() {
                   index={2}
                   label="eGFR Coverage" 
                   value={metrics ? `${Math.round(metrics.egfrCoverage)}%` : '0%'} 
+                  count={metrics?.egfrCount}
+                  total={metrics?.totalPatients}
                   color="indigo"
                   percentage={metrics?.egfrCoverage}
                 />
@@ -254,29 +253,21 @@ export default function App() {
                   index={3}
                   label="LDL Coverage" 
                   value={metrics ? `${Math.round(metrics.ldlCoverage)}%` : '0%'} 
+                  count={metrics?.ldlCount}
+                  total={metrics?.totalPatients}
                   color="teal"
                   percentage={metrics?.ldlCoverage}
                 />
                 <MetricCard 
                   index={4}
-                  label="Screening Coverage" 
+                  label="FOOT/EYE/DEN COVERAGE" 
                   value={metrics ? `${Math.round(metrics.screeningCoverage)}%` : '0%'} 
+                  count={metrics?.screeningCount}
+                  total={metrics?.screeningTotal}
                   color="amber"
                   percentage={metrics?.screeningCoverage}
                 />
               </div>
-
-              {/* Filter Row */}
-              <FilterBar 
-                locations={locations}
-                doctors={doctors}
-                selectedLocation={selectedLocation}
-                selectedDoctor={selectedDoctor}
-                onLocationChange={setSelectedLocation}
-                onDoctorChange={setSelectedDoctor}
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-              />
 
               {/* Charts & Ranking Middle Row */}
               {metrics && (
@@ -289,8 +280,22 @@ export default function App() {
                 </div>
               )}
 
-              {/* Data Table */}
-              <PatientTable patients={filteredPatients} />
+              {/* Filter & Table Row */}
+              <div className="space-y-4">
+                <FilterBar 
+                  locations={locations}
+                  doctors={doctors}
+                  selectedLocation={selectedLocation}
+                  selectedDoctor={selectedDoctor}
+                  onLocationChange={setSelectedLocation}
+                  onDoctorChange={setSelectedDoctor}
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  selectedStatus={selectedStatus}
+                  onStatusChange={setSelectedStatus}
+                />
+                <PatientTable patients={filteredPatients} />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

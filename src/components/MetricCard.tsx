@@ -9,6 +9,8 @@ interface MetricCardProps {
   icon?: LucideIcon;
   description?: string;
   percentage?: number;
+  count?: number;
+  total?: number;
   color?: 'blue' | 'green' | 'amber' | 'rose' | 'indigo' | 'teal';
   index: number;
 }
@@ -22,7 +24,7 @@ const colorMap = {
   teal: { text: 'text-teal-600', bar: 'bg-teal-500' },
 };
 
-export function MetricCard({ label, value, percentage, color = 'blue', index }: MetricCardProps) {
+export function MetricCard({ label, value, percentage, count, total, color = 'blue', index }: MetricCardProps) {
   const theme = colorMap[color as keyof typeof colorMap] || colorMap.blue;
 
   return (
@@ -32,10 +34,15 @@ export function MetricCard({ label, value, percentage, color = 'blue', index }: 
       transition={{ delay: index * 0.05 }}
       className="bg-white p-5 rounded-xl shadow-sm border border-slate-200"
     >
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</p>
-      <p className={cn("text-3xl font-bold mt-1 tracking-tight", theme.text)}>
-        {value}
-      </p>
+      <p className="text-xs font-bold text-slate-400 tracking-wider">{label}</p>
+      <div className="flex items-baseline gap-2 mt-1">
+        <p className={cn("text-3xl font-bold tracking-tight", theme.text)}>
+          {value}
+        </p>
+        <p className="text-sm font-mono text-slate-400">
+          {count !== undefined ? `(${count})` : ''}
+        </p>
+      </div>
       
       <div className="mt-2 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
         <motion.div 

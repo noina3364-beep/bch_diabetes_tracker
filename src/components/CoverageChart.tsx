@@ -22,7 +22,7 @@ export function CoverageMetrics({ metrics }: CoverageMetricsProps) {
           return (
             <div key={metric.name} className="flex flex-col gap-2">
               <div className="flex justify-between items-end px-1">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{metric.name}</span>
+                <span className="text-xs font-bold text-slate-500 tracking-wider">{metric.name}</span>
                 <div className="flex gap-4 text-xs font-mono">
                   <span className="text-emerald-600 font-bold whitespace-nowrap text-xs">
                     Done: {Math.round(metric.percentage)}% ({metric.coveredCount})

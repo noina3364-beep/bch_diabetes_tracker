@@ -36,7 +36,8 @@ export interface NormalizedPatient {
   has_eye: boolean;
   has_den: boolean;
   has_fu: boolean;
-  is_complete: boolean;
+  is_complete: boolean; // Keeping for compatibility if needed elsewhere, but mainly using status
+  status: 'Complete' | 'Partially Complete' | 'Incomplete';
   hba1c_category: 'Normal' | 'Abnormal' | 'No Data';
   egfr_category: 'Normal' | 'Abnormal' | 'No Data';
 }
@@ -44,10 +45,16 @@ export interface NormalizedPatient {
 export interface DashboardMetrics {
   totalPatients: number;
   hba1cCoverage: number;
+  hba1cCount: number;
   egfrCoverage: number;
+  egfrCount: number;
   ldlCoverage: number;
-  screeningCoverage: number; // avg of Foot + Eye
+  ldlCount: number;
+  screeningCoverage: number; // avg of Foot + Eye + Den
+  screeningCount: number;
+  screeningTotal: number;
   dentalCoverage: number;
+  dentalCount: number;
   hba1cDistribution: {
     name: string;
     value: number;
@@ -56,5 +63,11 @@ export interface DashboardMetrics {
   missingItems: {
     field: string;
     count: number;
+  }[];
+  coverageDetails: {
+    name: string;
+    percentage: number;
+    coveredCount: number;
+    missingCount: number;
   }[];
 }

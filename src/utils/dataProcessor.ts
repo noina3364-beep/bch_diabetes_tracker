@@ -106,8 +106,15 @@ export function normalizeData(records: PatientRecord[]): NormalizedPatient[] {
     const has_den = den === true;
     const has_fu = fu !== null;
 
-    // Strict completeness: HbA1c, eGFR, LDL, Foot, Eye
-    const is_complete = has_hba1c && has_egfr && has_ldl && has_foot && has_eye;
+    // Status: Complete if Foot, Eye, and Dental are ALL present
+    const is_complete = has_foot && has_eye && has_den;
+    let status: NormalizedPatient['status'] = 'Incomplete';
+    
+    if (is_complete) {
+      status = 'Complete';
+    } else if (has_foot || has_eye || has_den) {
+      status = 'Partially Complete';
+    }
 
     let hba1c_category: NormalizedPatient['hba1c_category'] = 'No Data';
     if (hba1c !== null) {
@@ -143,6 +150,7 @@ export function normalizeData(records: PatientRecord[]): NormalizedPatient[] {
       has_den,
       has_fu,
       is_complete,
+      status,
       hba1c_category,
       egfr_category,
     };

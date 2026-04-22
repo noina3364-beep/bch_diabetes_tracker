@@ -2,7 +2,7 @@ export const COLUMN_MAPPING: Record<string, string[]> = {
   hn: ['hn', 'patient identifier', 'id', 'hn_no'],
   name: ['name', 'patient name', 'fullname', 'ชื่อ'],
   age: ['age', 'อายุ'],
-  doctor: ['doctor', 'physician', 'doc', 'แพทย์'],
+  doctor: ['doctor', 'physician', 'doc', 'dr', 'แพทย์'],
   location: ['location', 'unit', 'ward', 'site', 'หน่วยงาน'],
   date: ['date', 'visit date', 'collected date', 'วันที่'],
   hba1c: ['hba1c', 'hb a1c', 'hemoglobin a1c'],
