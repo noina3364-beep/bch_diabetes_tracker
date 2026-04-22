@@ -1,0 +1,6 @@
+{
+  "name": "Diabetes Data Dashboard",
+  "description": "Visualizes diabetes patient monitoring completeness and key clinical indicators from Excel uploads.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
